@@ -5,13 +5,20 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { Ellipsis, Pen, ShieldBan, ShieldCheck } from "lucide-react";
+import {
+  Ellipsis,
+  Loader2Icon,
+  Pen,
+  ShieldBan,
+  ShieldCheck,
+} from "lucide-react";
 import type React from "react";
 import type { Symptom } from "@/interfaces/symptoms";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
 import SymptomToggle from "./SymptomToggle";
+import { usePatchSymptom } from "@/hooks/useSymptoms";
 
 const ActionsDropdown = ({
   setIsEditDialogOpen,
@@ -24,6 +31,7 @@ const ActionsDropdown = ({
 }) => {
   const [isToggleDialogOpen, setIsToggleDialogOpen] = useState<boolean>(false);
   const isActive = symptom.is_active;
+  const patchSymptom = usePatchSymptom();
 
   const openEditDialog = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -38,7 +46,10 @@ const ActionsDropdown = ({
 
   const onToggleSymptom = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    console.log("toggling", symptom);
+    patchSymptom.mutate({
+      uid: symptom.uid,
+      body: { is_active: !symptom.is_active },
+    });
     setIsToggleDialogOpen(false);
   };
 
@@ -46,8 +57,16 @@ const ActionsDropdown = ({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon">
-            <Ellipsis />
+          <Button
+            disabled={patchSymptom.isPending}
+            variant="secondary"
+            size="icon"
+          >
+            {patchSymptom.isPending ? (
+              <Loader2Icon size={"16"} className="animate-spin text-primary" />
+            ) : (
+              <Ellipsis />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>

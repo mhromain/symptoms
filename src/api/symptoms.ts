@@ -4,13 +4,13 @@ import { api } from "./client";
 
 export const getSymptoms = () => api<Symptom[]>("/api/symptoms");
 
-export const createSymptom = (body: Omit<Symptom, "uid">) =>
+export const createSymptom = (body: Partial<Symptom>) =>
   api<Symptom>("/api/symptoms", {
     method: "POST",
     body: JSON.stringify(body),
   });
 
-export const updateSymptom = (uid: string, body: Partial<Symptom>) =>
+export const patchSymptom = (uid: string, body: Partial<Symptom>) =>
   api<Symptom>(`/api/symptoms/${uid}`, {
     method: "PATCH",
     body: JSON.stringify(body),

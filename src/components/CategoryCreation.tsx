@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
-import { Blocks, Trash } from "lucide-react";
+import { Blocks, Loader2Icon, Trash } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { useIsFetching } from "@tanstack/react-query";
 
 const categoryFormSchema = z.object({
   categories: z.array(z.string().min(1, "Le champ ne peut pas être vide")),
@@ -27,6 +28,7 @@ const CategoryCreation = ({
       categories: ["Aa"],
     },
   });
+  const isCategoriesLoading = useIsFetching({ queryKey: ["categories"] });
 
   const { fields, append, remove } = useFieldArray<any>({
     control: form.control,
@@ -74,11 +76,17 @@ const CategoryCreation = ({
             onClick={() => append("")}
             variant="secondary"
             className="grow"
+            disabled={!!isCategoriesLoading}
           >
             <Blocks /> Ajouter une autre catégorie
           </Button>
 
-          <Button type="submit">Enregistrer</Button>
+          <Button type="submit" disabled={!!isCategoriesLoading}>
+            {!!isCategoriesLoading && (
+              <Loader2Icon size={"16"} className="animate-spin text-white" />
+            )}
+            Enregistrer
+          </Button>
         </div>
       </form>
     </Form>

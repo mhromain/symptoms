@@ -41,7 +41,7 @@ export const mockSymptoms: Symptom[] = [
     last_author: "Alexis Roux",
   },
   {
-    id: 1,
+    id: 2,
     uid: "symp-002",
     category: 1,
     name: "Mal aux oreilles",
@@ -58,7 +58,7 @@ export const mockSymptoms: Symptom[] = [
     last_author: "Romain Reghem",
   },
   {
-    id: 1,
+    id: 3,
     uid: "symp-003",
     category: 2,
     name: "Boutons sur le visage",

@@ -40,8 +40,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Activity, Blocks, Loader2Icon } from "lucide-react";
 import CategoryCreation from "@/components/CategoryCreation";
-import { useCategories } from "@/hooks/useCategories";
-import { useSymptoms } from "@/hooks/useSymptoms";
+import { useCategories, useCreateCategory } from "@/hooks/useCategories";
+import {
+  useCreateSymptom,
+  usePatchSymptom,
+  useSymptoms,
+} from "@/hooks/useSymptoms";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -50,6 +54,9 @@ export const Route = createFileRoute("/_private/home")({
 });
 
 function HomePage() {
+  const patchSymptom = usePatchSymptom();
+  const createSymptom = useCreateSymptom();
+  const createCategory = useCreateCategory();
   const [searchText, setSearchText] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [category, setCategory] = useState<number | null>(null);
@@ -85,19 +92,49 @@ function HomePage() {
   );
 
   const onCreateCategories = (categories: string[]) => {
-    console.log("Submitted categories:", categories);
+    createCategory.mutate(categories, {
+      onSuccess: () => {
+        setIsCreateCategoryDialogOpen(false);
+        setClickedSymptom(null);
+      },
+    });
   };
 
   const onCreateSymptom = (values: SymptomFormValues) => {
     setIsCreateSymptomDialogOpen(false);
     setClickedSymptom(null);
-    console.log("Submitted values:", values);
+    createSymptom.mutate(
+      {
+        ...values,
+        category: parseInt(values.category) || 1,
+        is_active: true,
+        author: "Jean Dupont",
+      },
+      {
+        onSuccess: () => {
+          setIsCreateSymptomDialogOpen(false);
+          setClickedSymptom(null);
+        },
+      }
+    );
   };
 
   const onEditSymptom = (values: SymptomFormValues) => {
+    if (!clickedSymptom) return;
     setIsEditDialogOpen(false);
+    patchSymptom.mutate(
+      {
+        uid: clickedSymptom.uid,
+        body: { ...values, category: parseInt(values.category) || 1 },
+      },
+      {
+        onSuccess: () => {
+          setIsEditDialogOpen(false);
+          setClickedSymptom(null);
+        },
+      }
+    );
     setClickedSymptom(null);
-    console.log("Submitted values:", values);
   };
 
   return (

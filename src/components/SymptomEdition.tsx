@@ -31,6 +31,9 @@ import {
   type SymptomFormValues,
 } from "@/utils";
 import { Separator } from "./ui/separator";
+import { useCategories } from "@/hooks/useCategories";
+import { Loader2Icon } from "lucide-react";
+import { useIsFetching } from "@tanstack/react-query";
 
 const SymptomEdition = ({
   symptom,
@@ -39,6 +42,9 @@ const SymptomEdition = ({
   symptom: Symptom | null;
   onSubmitSymptom: (values: SymptomFormValues) => void;
 }) => {
+  const { data: categories = [...mockCategories] } = useCategories();
+  const isCategoriesLoading = useIsFetching({ queryKey: ["categories"] });
+
   const form = useForm<SymptomFormValues>({
     resolver: zodResolver(symptomFormSchema),
     defaultValues: {
@@ -83,16 +89,33 @@ const SymptomEdition = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Catégorie</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                disabled={!!isCategoriesLoading}
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sélectionner" />
+                    {!!isCategoriesLoading && (
+                      <Loader2Icon
+                        size={"16"}
+                        className="animate-spin text-primary"
+                      />
+                    )}
+
+                    <SelectValue
+                      placeholder={
+                        !!isCategoriesLoading
+                          ? "Chargement des catégories"
+                          : "Sélectionner"
+                      }
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Catégories</SelectLabel>
-                    {mockCategories.map((category) => (
+                    {categories.map((category) => (
                       <SelectItem
                         key={category.id}
                         value={category.id.toString()}
