@@ -3,7 +3,12 @@ import { getSymptoms, createSymptom, patchSymptom } from "@/api/symptoms";
 import type { Symptom } from "@/interfaces/symptoms";
 
 export function useSymptoms() {
-  return useQuery({ queryKey: ["symptoms"], queryFn: getSymptoms });
+  return useQuery({
+    queryKey: ["symptoms"],
+    queryFn: getSymptoms,
+    staleTime: Infinity,
+    refetchOnMount: false,
+  });
 }
 
 export function useCreateSymptom() {

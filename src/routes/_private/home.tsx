@@ -101,7 +101,6 @@ function HomePage() {
   };
 
   const onCreateSymptom = (values: SymptomFormValues) => {
-    setIsCreateSymptomDialogOpen(false);
     setClickedSymptom(null);
     createSymptom.mutate(
       {
@@ -121,7 +120,6 @@ function HomePage() {
 
   const onEditSymptom = (values: SymptomFormValues) => {
     if (!clickedSymptom) return;
-    setIsEditDialogOpen(false);
     patchSymptom.mutate(
       {
         uid: clickedSymptom.uid,
