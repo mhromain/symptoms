@@ -1,28 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  mockCategories,
-  mockSymptoms,
-  type Symptom,
-} from "@/interfaces/symptoms";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { mockCategories, mockSymptoms, type Symptom } from "@/interfaces/symptoms";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import ChoicesTable from "@/components/ChoicesTable";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -30,30 +10,22 @@ import ActionsDropdown from "@/components/ActionsDropdown";
 import { Separator } from "@/components/ui/separator";
 import SymptomEdition from "@/components/SymptomEdition";
 import type { SymptomFormValues } from "@/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Activity, Blocks, Loader2Icon } from "lucide-react";
 import CategoryCreation from "@/components/CategoryCreation";
 import { useCategories, useCreateCategory } from "@/hooks/useCategories";
-import {
-  useCreateSymptom,
-  usePatchSymptom,
-  useSymptoms,
-} from "@/hooks/useSymptoms";
+import { useCreateSymptom, usePatchSymptom, useSymptoms } from "@/hooks/useSymptoms";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/store/auth";
 
 export const Route = createFileRoute("/_private/home")({
   component: HomePage,
 });
 
 function HomePage() {
+  const user = useAuth((state) => state.user);
   const patchSymptom = usePatchSymptom();
   const createSymptom = useCreateSymptom();
   const createCategory = useCreateCategory();
@@ -61,19 +33,13 @@ function HomePage() {
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [category, setCategory] = useState<number | null>(null);
   const [seeDisabled, setSeeDisabled] = useState<boolean>(false);
-  const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] =
-    useState<boolean>(false);
-  const [isCreateSymptomDialogOpen, setIsCreateSymptomDialogOpen] =
-    useState<boolean>(false);
+  const [isCreateCategoryDialogOpen, setIsCreateCategoryDialogOpen] = useState<boolean>(false);
+  const [isCreateSymptomDialogOpen, setIsCreateSymptomDialogOpen] = useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [clickedSymptom, setClickedSymptom] = useState<Symptom | null>(null);
 
-  const { data: symptoms = [...mockSymptoms], isLoading: loadingSymptoms } =
-    useSymptoms();
-  const {
-    data: categories = [...mockCategories],
-    isLoading: loadingCategories,
-  } = useCategories();
+  const { data: symptoms = [...mockSymptoms], isLoading: loadingSymptoms } = useSymptoms();
+  const { data: categories = [...mockCategories], isLoading: loadingCategories } = useCategories();
 
   const findCategoryLabel = (categoryId: number) => {
     return categories.find((cat) => cat.id === categoryId)?.label;
@@ -107,7 +73,7 @@ function HomePage() {
         ...values,
         category: parseInt(values.category) || 1,
         is_active: true,
-        author: "Jean Dupont",
+        author: user?.username || "unknown",
       },
       {
         onSuccess: () => {
@@ -123,7 +89,7 @@ function HomePage() {
     patchSymptom.mutate(
       {
         uid: clickedSymptom.uid,
-        body: { ...values, category: parseInt(values.category) || 1 },
+        body: { ...values, category: parseInt(values.category) || 1, last_author: user?.username || "unknown" },
       },
       {
         onSuccess: () => {
@@ -165,9 +131,7 @@ function HomePage() {
           </Button>
         </div>
         <div className="flex items-center">
-          {(loadingCategories || loadingSymptoms) && (
-            <Loader2Icon size={"16"} className="animate-spin text-primary" />
-          )}
+          {(loadingCategories || loadingSymptoms) && <Loader2Icon size={"16"} className="animate-spin text-primary" />}
         </div>
       </div>
       <Table className="table-fixed overflow-y-scroll">
@@ -184,17 +148,10 @@ function HomePage() {
             <Collapsible key={"collapsible" + symptom.uid} asChild>
               <>
                 <CollapsibleTrigger asChild>
-                  <TableRow
-                    key={"row1" + symptom.uid}
-                    className={symptom.is_active ? "opacity-100" : "opacity-50"}
-                  >
-                    <TableCell className="overflow-hidden text-ellipsis">
-                      {symptom.name}
-                    </TableCell>
+                  <TableRow key={"row1" + symptom.uid} className={symptom.is_active ? "opacity-100" : "opacity-50"}>
+                    <TableCell className="overflow-hidden text-ellipsis">{symptom.name}</TableCell>
                     <TableCell>{findCategoryLabel(symptom.category)}</TableCell>
-                    <TableCell className="overflow-hidden text-ellipsis">
-                      {symptom.label}
-                    </TableCell>
+                    <TableCell className="overflow-hidden text-ellipsis">{symptom.label}</TableCell>
                     <TableCell className="text-right">
                       <ActionsDropdown
                         setIsEditDialogOpen={setIsEditDialogOpen}
@@ -217,10 +174,7 @@ function HomePage() {
         </TableBody>
       </Table>
 
-      <Dialog
-        open={isCreateCategoryDialogOpen}
-        onOpenChange={setIsCreateCategoryDialogOpen}
-      >
+      <Dialog open={isCreateCategoryDialogOpen} onOpenChange={setIsCreateCategoryDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Création de catégories</DialogTitle>
@@ -230,18 +184,12 @@ function HomePage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={isCreateSymptomDialogOpen}
-        onOpenChange={setIsCreateSymptomDialogOpen}
-      >
+      <Dialog open={isCreateSymptomDialogOpen} onOpenChange={setIsCreateSymptomDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Création d'un symptome</DialogTitle>
             <Separator className="my-4" />
-            <SymptomEdition
-              onSubmitSymptom={onCreateSymptom}
-              symptom={clickedSymptom}
-            />
+            <SymptomEdition onSubmitSymptom={onCreateSymptom} symptom={clickedSymptom} />
           </DialogHeader>
         </DialogContent>
       </Dialog>
@@ -251,10 +199,7 @@ function HomePage() {
           <DialogHeader>
             <DialogTitle>Modification du symptome</DialogTitle>
             <Separator className="my-4" />
-            <SymptomEdition
-              onSubmitSymptom={onEditSymptom}
-              symptom={clickedSymptom}
-            />
+            <SymptomEdition onSubmitSymptom={onEditSymptom} symptom={clickedSymptom} />
           </DialogHeader>
         </DialogContent>
       </Dialog>

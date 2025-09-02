@@ -30,40 +30,32 @@ function Login() {
   };
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-4xl">
-        <div className="flex flex-col gap-6">
-          <Card className="overflow-hidden p-0">
-            <CardContent className="grid p-0 md:grid-cols-2">
-              <form className="p-6 md:p-8">
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col items-center text-center">
-                    <img src="/symptoms.png" className="h-8 mb-1" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">Identifiant</Label>
-                    <Input id="username" placeholder="Aa" required />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="password">Mot de passe</Label>
-                    <Input id="password" type="password" required />
-                  </div>
-                  <Button type="submit" className="w-full" onClick={login}>
-                    Connexion LDAP
-                  </Button>
-                </div>
-              </form>
-              <div className="bg-muted relative hidden md:block">
-                <img
-                  src="/image.jpg"
-                  alt="Image"
-                  className="absolute inset-0 h-full w-full object-cover brightness-70"
-                />
+    <div className="flex min-h-svh md:min-w-xl flex-col items-center justify-center ">
+      <Card className="w-full overflow-hidden p-0">
+        <CardContent className="grid p-0 md:grid-cols-2">
+          <form className="p-6 md:p-8">
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col items-center text-center">
+                <img src="/symptoms.png" className="h-8 mb-1" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+              <div className="grid gap-3">
+                <Label htmlFor="email">Identifiant</Label>
+                <Input id="username" placeholder="Aa" required />
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="password">Mot de passe</Label>
+                <Input id="password" type="password" required />
+              </div>
+              <Button type="submit" className="w-full" onClick={login}>
+                Connexion LDAP
+              </Button>
+            </div>
+          </form>
+          <div className="bg-muted relative hidden md:block">
+            <img src="/image.jpg" alt="Image" className="absolute inset-0 h-full w-full object-cover brightness-70" />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

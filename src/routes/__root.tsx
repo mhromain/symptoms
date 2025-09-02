@@ -8,10 +8,6 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => {
-    return (
-      <>
-        <Outlet />
-      </>
-    );
+    return <Outlet />;
   },
 });
