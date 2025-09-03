@@ -3,12 +3,10 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Blocks, Loader2Icon, Trash } from "lucide-react";
-import { Separator } from "./ui/separator";
 import { useIsFetching } from "@tanstack/react-query";
 
 const categoryFormSchema = z.object({
@@ -69,7 +67,7 @@ const CategoryCreation = ({
             )}
           />
         ))}
-        <Separator className="my-4" />
+        {/* <Separator className="my-4" /> */}
         <div className="flex gap-2">
           <Button
             type="button"

@@ -8,3 +8,9 @@ export const createCategory = (categories: string[]) =>
     method: "POST",
     body: JSON.stringify(categories),
   });
+
+export const deleteCategory = (ids: number[]) =>
+  api<SymptomCategory>("/api/categories", {
+    method: "DELETE",
+    body: JSON.stringify(ids),
+  });

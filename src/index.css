@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -110,13 +111,18 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@theme {
+  --font-inter-tight: "Inter Tight", sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter-tight tracking-wide antialiased;
   }
+  
 }
 
 #root{
@@ -124,13 +130,3 @@
   flex-direction: column;
   align-items: center;
 }
-
-/* .col-name, .col-label{
-  min-width: calc(var(--container-6xl) / 3 - var(--spacing) * 4);
-  max-width: calc(var(--container-6xl) / 3  - var(--spacing) * 4);
-}
-
-.col-category, .col-actions{
-  min-width: calc(var(--container-6xl) / 6 - var(--spacing) * 4);
-  max-width: calc(var(--container-6xl) / 6 - var(--spacing) * 4);
-} */
