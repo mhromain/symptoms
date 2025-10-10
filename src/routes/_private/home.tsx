@@ -18,14 +18,9 @@ import {
   mockSymptoms,
   type Symptom,
 } from "@/interfaces/symptoms";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import ChoicesTable from "@/components/ChoicesTable";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import ActionsDropdown from "@/components/ActionsDropdown";
 import { Separator } from "@/components/ui/separator";
 import SymptomEdition from "@/components/SymptomEdition";
@@ -76,6 +71,7 @@ function HomePage() {
     useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [clickedSymptom, setClickedSymptom] = useState<Symptom | null>(null);
+  const [expandedSymptom, setExpandedSymptom] = useState<string | null>(null);
 
   const { data: symptoms = [...mockSymptoms], isLoading: loadingSymptoms } =
     useSymptoms();
@@ -201,38 +197,43 @@ function HomePage() {
         </TableHeader>
         <TableBody>
           {filteredSymptoms.map((symptom) => (
-            <Collapsible key={"collapsible" + symptom.uid} asChild>
-              <>
-                <CollapsibleTrigger asChild>
-                  <TableRow
-                    key={"row1" + symptom.uid}
-                    className={symptom.is_active ? "opacity-100" : "opacity-50"}
-                  >
-                    <TableCell className="overflow-hidden text-ellipsis">
-                      {symptom.name}
-                    </TableCell>
-                    <TableCell>{findCategoryLabel(symptom.category)}</TableCell>
-                    <TableCell className="overflow-hidden text-ellipsis">
-                      {symptom.label}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <ActionsDropdown
-                        setIsEditDialogOpen={setIsEditDialogOpen}
-                        setClickedSymptom={setClickedSymptom}
-                        symptom={symptom}
-                      />
-                    </TableCell>
-                  </TableRow>
-                </CollapsibleTrigger>
-                <CollapsibleContent asChild>
-                  <TableRow key={"row2" + symptom.uid}>
-                    <TableCell colSpan={5} className="bg-red-50">
-                      <ChoicesTable symptom={symptom} />
-                    </TableCell>
-                  </TableRow>
-                </CollapsibleContent>
-              </>
-            </Collapsible>
+            <Fragment key={"symptom" + symptom.uid}>
+              <TableRow
+                className={[
+                  symptom.is_active
+                    ? "opacity-100"
+                    : "opacity-50 cursor-pointer",
+                  "cursor-pointer",
+                ].join(" ")}
+                onClick={() =>
+                  setExpandedSymptom(
+                    expandedSymptom === symptom.uid ? null : symptom.uid
+                  )
+                }
+              >
+                <TableCell className="overflow-hidden text-ellipsis">
+                  {symptom.name}
+                </TableCell>
+                <TableCell>{findCategoryLabel(symptom.category)}</TableCell>
+                <TableCell className="overflow-hidden text-ellipsis">
+                  {symptom.label}
+                </TableCell>
+                <TableCell className="text-right">
+                  <ActionsDropdown
+                    setIsEditDialogOpen={setIsEditDialogOpen}
+                    setClickedSymptom={setClickedSymptom}
+                    symptom={symptom}
+                  />
+                </TableCell>
+              </TableRow>
+              {expandedSymptom === symptom.uid && (
+                <TableRow>
+                  <TableCell colSpan={5} className="bg-gray-50">
+                    <ChoicesTable symptom={symptom} />
+                  </TableCell>
+                </TableRow>
+              )}
+            </Fragment>
           ))}
         </TableBody>
       </Table>
