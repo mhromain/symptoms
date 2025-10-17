@@ -1,8 +1,6 @@
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
-  // mock 3s delay
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  const res = await fetch("http://127.0.0.1:8000" + path, {
+  const res = await fetch(import.meta.env.VITE_API_URL + path, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });

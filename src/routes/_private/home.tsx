@@ -14,9 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  mockCategories,
-  mockSymptoms,
-  type Symptom,
+  type Symptom
 } from "@/interfaces/symptoms";
 import ChoicesTable from "@/components/ChoicesTable";
 import { Input } from "@/components/ui/input";
@@ -73,10 +71,10 @@ function HomePage() {
   const [clickedSymptom, setClickedSymptom] = useState<Symptom | null>(null);
   const [expandedSymptom, setExpandedSymptom] = useState<string | null>(null);
 
-  const { data: symptoms = [...mockSymptoms], isLoading: loadingSymptoms } =
+  const { data: symptoms = [], isLoading: loadingSymptoms, isError:apiError } =
     useSymptoms();
   const {
-    data: categories = [...mockCategories],
+    data: categories = [],
     isLoading: loadingCategories,
   } = useCategories();
 
@@ -184,7 +182,10 @@ function HomePage() {
           {(loadingCategories || loadingSymptoms) && (
             <Loader2Icon size={"16"} className="animate-spin text-primary" />
           )}
+          {apiError && (<div className="text-red-500 ml-2">Erreur API</div>
+          )}
         </div>
+
       </div>
       <Table className="table-fixed overflow-y-scroll">
         <TableHeader>
